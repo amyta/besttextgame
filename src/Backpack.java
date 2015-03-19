@@ -16,14 +16,10 @@ public class Backpack {
 	
 	public void list()
 	{	
-//		if (contents.size() > 0)
-//		return "You are carrying " + this.contents.get(0).name;
-//		else
-//			return "Your pack is empty.";
 		if (contents.size() > 0) {
 			String carry = "You are carrying ";
 			for (Artifact item : contents) {
-				carry += item.name;
+				carry += item.name + " ";
 			}
 			System.out.println(carry);
 		} else {
@@ -40,6 +36,10 @@ public class Backpack {
 	public int count() // find out if pack is empty
 	{
 		return contents.size();
+	}
+	
+	public void addItem(Artifact item) {
+		contents.add(item);
 	}
 	
 	

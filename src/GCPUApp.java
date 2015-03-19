@@ -148,99 +148,96 @@ public class GCPUApp {
 			if (input.equals("inventory")) {
 				pack.list();
 			}
-				else
-					if (input.equals("restore"))
-					{	
-						
-						File file = new File("/volumes/macintosh hd/users/amyta/desktop/files/GCPU2.txt");
-						try (	FileReader reader = new FileReader(file);
-								BufferedReader buffer = new BufferedReader(reader);)
-						{	
-							map.clear();
-							String line = buffer.readLine();
-							while (line!=null)
-							{
-								String[] data = line.split(",");
-								String key = data[0];
-								if (key.equals("Start Location"))
-								{
-								row = Integer.parseInt(data[1]);
-								col = Integer.parseInt(data[2]);
-								}
-								else
-								if (key.equals("Artifact"))
-								{
-									String name = data[1];
-									int artifactRow = Integer.parseInt(data[2]);
-									int artifactCol = Integer.parseInt(data[3]);
-									map.setArtifact(name, artifactRow, artifactCol);
-								}
-								else if (key.equals("Inventory"))
-								{
-									String item = data[1];
-									pack.contents.add(map.getArtifact(item));
-									
-								}
-								line = buffer.readLine();
-								
-								}
-							map.rooms[row][col].enterRoom(); 
-						}
-						catch (IOException e)
+			else
+			if (input.equals("restore")) {
+				File file = new File("c:/files/gcpu.txt");
+				try (	FileReader reader = new FileReader(file);
+						BufferedReader buffer = new BufferedReader(reader);)
+				{	
+					map.clear();
+					String line = buffer.readLine();
+					while (line!=null) {
+						String[] data = line.split(",");
+						String key = data[0];
+						if (key.equals("Start Location"))
 						{
-							System.out.println("This file does not exist. Please save first.");
+						row = Integer.parseInt(data[1]);
+						col = Integer.parseInt(data[2]);
+						}
+						else
+						if (key.equals("Artifact"))
+						{
+							String name = data[1];
+							int artifactRow = Integer.parseInt(data[2]);
+							int artifactCol = Integer.parseInt(data[3]);
+							map.setArtifact(map.getArtifact(name), artifactRow, artifactCol);
+						}
+						else if (key.equals("Inventory"))
+						{
+							String item = data[1];
+							pack.addItem(map.getArtifact(item));
+						}
+						line = buffer.readLine();
+						
+						}
+					map.rooms[row][col].enterRoom(); 
+				}
+				catch (IOException e)
+				{
+					System.out.println("This file does not exist. Please save first.");
+				}
+					}
+			else
+			if (input.equals("save"))
+			try {
+				String save = "y";
+				
+				File file = new File("c:/files/gcpu.txt");
+				if (file.exists()) {
+					System.out.println("This file already exists. Would you like to overwrite? (Y/N)");
+					Scanner saveInput = new Scanner(System.in);
+					save = saveInput.nextLine();
+				}
+
+				FileWriter writer = new FileWriter(file);
+				BufferedWriter buffer = new BufferedWriter(writer);
+				PrintWriter pw = new PrintWriter(writer);
+				
+				if (save.equalsIgnoreCase("y")) {
+					pw.println("Start Location" + "," + row + "," + col);
+					for (int xrow = 0; xrow <= 3; xrow++) {
+						for (int ycol = 0; ycol <=3; ycol++) {
+							if (map.rooms[xrow][ycol].content != null) {
+								pw.println("Artifact," + map.rooms[xrow][ycol].content.name + "," + xrow + "," + ycol);
+							}
 						}
 					}
-						else
-						if (input.equals("save"))
-						try {
-							String save = "y";
-							
-							File file = new File("/volumes/macintosh hd/users/amyta/desktop/files/GCPU2.txt");
-							FileWriter writer = new FileWriter(file);
-							BufferedWriter buffer = new BufferedWriter(writer);
-							PrintWriter pw = new PrintWriter(writer);
-							
-							if (file.exists()) {
-								System.out.println("This file already exists. Would you like to overwrite? (Y/N)");
-								Scanner saveInput = new Scanner(System.in);
-								save = saveInput.nextLine();
-							}
-							if (save.equalsIgnoreCase("y")) {
-								pw.println("Start Location" + "," + row + "," + col);
-								for (int xrow = 0; xrow <= 3; xrow++) {
-									for (int ycol = 0; ycol <=3; ycol++) {
-										if (map.rooms[xrow][ycol].content != null) {
-											pw.println("Artifact," + map.rooms[xrow][ycol].content.name + "," + xrow + "," + ycol);
-										}
-									}
-								}
-								
-								for (int i=0; i < pack.contents.size(); i++) {
-									if (pack.contents != null) {
-										pw.println("Inventory," + pack.contents.get(i).name);
-									}
-								}
-								
-								buffer.close();
-								pw.close();
-							}
-							map.rooms[row][col].enterRoom();
-						}
-						catch (IOException e)
-						{
-							System.out.println(e.getMessage());
-						}
 					
-						else if (input.equals("take"))
-						{
+					for (int i=0; i < pack.contents.size(); i++) {
+						if (pack.contents != null) {
+							pw.println("Inventory," + pack.contents.get(i).name);
+						}
+					}
+					
+					buffer.close();
+					pw.close();
+				}
+				map.rooms[row][col].enterRoom();
+			}
+			catch (IOException e)
+			{
+				System.out.println(e.getMessage());
+			}
+		
+			else if (input.equals("take"))
+			{
 
-							if (map.rooms[row][col].content != null) {
-								pack.setArtifact(map.rooms[row][col].content);
-								map.rooms[row][col].content = null;
-							} else {
-								System.out.println("This room is empty.");
-							}
+				if (map.rooms[row][col].content != null) {
+					pack.setArtifact(map.rooms[row][col].content);
+					map.rooms[row][col].content = null;
+				} else {
+					System.out.println("This room is empty.");
+				}
 			
 			}
 			else if (input.equalsIgnoreCase("quit")) {
